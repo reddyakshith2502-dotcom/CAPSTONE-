@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>All Registrations</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <nav class="navbar">
+    <a href="/admin/events" class="nav-brand">⚙️ Admin Panel</a>
+    <div class="nav-links">
+      <a href="/admin/events">Event Management</a>
+      <a href="/admin/registrations" style="color: #fff;">View Registrations</a>
+      <a href="/admin/logout" class="badge">Logout</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="page-header" style="text-align: left; margin-bottom: 2rem;">
+      <h1 style="font-size: 2rem;">📋 Event Registrations</h1>
+      <p>Total Registrations: <span class="badge">{{ registrations|length }}</span></p>
+    </div>
+
+    <div class="table-container">
+      {% if registrations %}
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Attendee Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Event</th>
+            <th>Registered On</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for reg in registrations %}
+          <tr>
+            <td>{{ reg.id }}</td>
+            <td style="font-weight: 500;">{{ reg.full_name }}</td>
+            <td>{{ reg.email }}</td>
+            <td>{{ reg.phone or '—' }}</td>
+            <td><span class="badge">{{ reg.event.name }}</span></td>
+            <td>{{ reg.created_at.strftime('%b %d, %Y') }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <div class="empty-state">
+        <h3>No registrations yet.</h3>
+        <p>Once users register for events, they will appear here.</p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</body>
+</html>

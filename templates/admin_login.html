@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="container narrow" style="margin-top: 5rem;">
+    <div class="form-panel" style="text-align: center;">
+      <h2 style="margin-bottom: 2rem;">Admin Login</h2>
+      
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          <div class="flash-messages">
+            {% for message in messages %}
+              <div class="flash-message">{{ message }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+
+      <form action="{{ url_for('admin_login') }}" method="POST" style="text-align: left;">
+        <div class="form-group">
+          <label for="email">Admin Email</label>
+          <input type="email" id="email" name="email" class="form-control" required placeholder="admin@college.edu">
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" class="form-control" required placeholder="admin123">
+        </div>
+        <button type="submit" class="btn" style="width: 100%; margin-top: 1rem;">Login</button>
+      </form>
+      <div style="margin-top: 1.5rem;">
+        <a href="/" style="color: var(--text-muted); text-decoration: none;">← Back to Home</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

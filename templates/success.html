@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registration Successful</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="container narrow">
+    <div class="form-panel" style="text-align: center; margin-top: 4rem;">
+      <span class="success-check">✅</span>
+      <h2 style="font-size: 2.5rem; margin-bottom: 1rem; color: var(--success);">Registration Successful!</h2>
+      <p style="font-size: 1.1rem; color: var(--text-muted); margin-bottom: 2rem;">
+        Thank you, <strong style="color: #fff;">{{ name }}</strong>. You have successfully registered for <strong style="color: #fff;">{{ event }}</strong>.
+      </p>
+      
+      <a href="/" class="btn" style="width: 100%;">Return to Home</a>
+    </div>
+  </div>
+</body>
+</html>

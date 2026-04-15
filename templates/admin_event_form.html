@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% if event %}Edit{% else %}Create{% endif %} Event</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <nav class="navbar">
+    <a href="/admin/events" class="nav-brand">⚙️ Admin Panel</a>
+    <div class="nav-links">
+      <a href="/admin/events">Event Management</a>
+      <a href="/admin/registrations">View Registrations</a>
+      <a href="/admin/logout" class="badge">Logout</a>
+    </div>
+  </nav>
+
+  <div class="container narrow">
+    <a href="/admin/events" class="btn btn-secondary" style="margin-bottom: 2rem; display: inline-block;">← Back to Events</a>
+
+    <div class="form-panel">
+      <h2 style="margin-bottom: 2rem;">{% if event %}Edit Event{% else %}Create New Event{% endif %}</h2>
+      
+      <form action="{% if event %}{{ url_for('admin_events_edit', event_id=event.id) }}{% else %}{{ url_for('admin_events_new') }}{% endif %}" method="POST">
+        
+        <div class="form-group">
+          <label for="name">Event Name</label>
+          <input type="text" id="name" name="name" class="form-control" value="{{ event.name if event else '' }}" required placeholder="e.g. CodeFest 2026">
+        </div>
+        
+        <div class="form-group">
+          <label for="date">Date & Time</label>
+          <input type="datetime-local" id="date" name="date" class="form-control" value="{{ event.date if event else '' }}" required>
+        </div>
+
+        <div class="form-group">
+          <label for="location">Location</label>
+          <input type="text" id="location" name="location" class="form-control" value="{{ event.location if event else '' }}" required placeholder="e.g. Main Auditorium">
+        </div>
+
+        <div class="form-group">
+          <label for="description">Event Description</label>
+          <textarea id="description" name="description" class="form-control" required placeholder="Describe what the event is about...">{{ event.description if event else '' }}</textarea>
+        </div>
+
+        <button type="submit" class="btn" style="width: 100%;">{% if event %}Save Changes{% else %}Create Event{% endif %}</button>
+      </form>
+    </div>
+  </div>
+</body>
+</html>
