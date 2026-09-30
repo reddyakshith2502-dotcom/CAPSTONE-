@@ -1,0 +1,92 @@
+class Graph:
+    def __init__(self, vertices):
+        self.V = vertices
+        self.graph = [] # default array to store graph edges for MST
+        self.adj = {i: [] for i in range(vertices)} # adjacency list for DFS
+
+    def add_edge(self, u, v, w=0):
+        # Adding to the list for Kruskal's Minimum Spanning Tree
+        self.graph.append([u, v, w])
+        # Adding to the adjacency list for DFS Traversal
+        self.adj[u].append(v)
+        self.adj[v].append(u) # Assuming undirected graph
+
+    # --- 1. DFS Traversal & DFS Spanning Tree ---
+    def dfs_util(self, v, visited, dfs_tree_edges):
+        visited[v] = True
+        print(v, end=" ")
+        
+        for neighbour in self.adj[v]:
+            if not visited[neighbour]:
+                dfs_tree_edges.append((v, neighbour))
+                self.dfs_util(neighbour, visited, dfs_tree_edges)
+
+    def dfs(self, start_vertex):
+        visited = [False] * self.V
+        dfs_tree_edges = []
+        print("DFS Traversal:")
+        self.dfs_util(start_vertex, visited, dfs_tree_edges)
+        print("\n\nDFS Spanning Tree Edges:", dfs_tree_edges)
+
+    # --- 2. Minimal Spanning Tree (Kruskal's Algorithm) ---
+    def find(self, parent, i):
+        if parent[i] == i:
+            return i
+        return self.find(parent, parent[i])
+
+    def union(self, parent, rank, x, y):
+        xroot = self.find(parent, x)
+        yroot = self.find(parent, y)
+
+        if rank[xroot] < rank[yroot]:
+            parent[xroot] = yroot
+        elif rank[xroot] > rank[yroot]:
+            parent[yroot] = xroot
+        else:
+            parent[yroot] = xroot
+            rank[xroot] += 1
+
+    def kruskal_mst(self):
+        result = []
+        i = 0
+        e = 0
+        # Sort graph edges by weight
+        self.graph = sorted(self.graph, key=lambda item: item[2])
+        parent = []
+        rank = []
+
+        for node in range(self.V):
+            parent.append(node)
+            rank.append(0)
+
+        while e < self.V - 1 and i < len(self.graph):
+            u, v, w = self.graph[i]
+            i = i + 1
+            x = self.find(parent, u)
+            y = self.find(parent, v)
+
+            # If including this edge doesn't cause cycle, include it
+            if x != y:
+                e = e + 1
+                result.append([u, v, w])
+                self.union(parent, rank, x, y)
+
+        print("\nMinimal Spanning Tree (Kruskal's):")
+        for u, v, weight in result:
+             print(f"Edge {u}-{v} : Weight {weight}")
+
+# --- Example Usage ---
+if __name__ == "__main__":
+    # Create a graph with 4 vertices
+    g = Graph(4)
+    g.add_edge(0, 1, 10)
+    g.add_edge(0, 2, 6)
+    g.add_edge(0, 3, 5)
+    g.add_edge(1, 3, 15)
+    g.add_edge(2, 3, 4)
+
+    # 1. Output DFS Traversal starting from vertex 0
+    g.dfs(0)
+
+    # 2. Output Minimal Spanning Tree
+    g.kruskal_mst()

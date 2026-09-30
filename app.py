@@ -1,10 +1,19 @@
+import os
+import tempfile
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from functools import wraps
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///registrations.db'
+
+# Handle SQLite DB path for local development vs Vercel serverless environment
+if os.environ.get('VERCEL'):
+    db_path = os.path.join(tempfile.gettempdir(), 'registrations.db')
+    app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
+else:
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///registrations.db'
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = 'super_secret_secure_key'
 
@@ -27,6 +36,22 @@ class Registration(db.Model):
     phone = db.Column(db.String(15))
     event_id = db.Column(db.Integer, db.ForeignKey('event.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+# Ensure DB tables are created on initialization
+def init_db():
+    with app.app_context():
+        db.create_all()
+        if not Event.query.first():
+            demo_event = Event(
+                name="Tech Innovation Summit 2026",
+                description="Join us for the largest tech gathering of the year on our college campus. Industry leaders and top students will showcase new technologies.",
+                date="May 15th, 2026",
+                location="Main Auditorium"
+            )
+            db.session.add(demo_event)
+            db.session.commit()
+
+init_db()
 
 # ==== ADMIN AUTH DECORATOR ====
 
@@ -136,16 +161,4 @@ def registrations():
 # ==== STARTUP SCRIPTS ====
 
 if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
-        # Seed an initial event if none exist
-        if not Event.query.first():
-            demo_event = Event(
-                name="Tech Innovation Summit 2026",
-                description="Join us for the largest tech gathering of the year on our college campus. Industry leaders and top students will showcase new technologies.",
-                date="May 15th, 2026",
-                location="Main Auditorium"
-            )
-            db.session.add(demo_event)
-            db.session.commit()
     app.run(debug=True, port=5000)
